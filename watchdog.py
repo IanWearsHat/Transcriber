@@ -1,13 +1,14 @@
 import time
 import keyboard
+import os
 import imaplib
 import email
 from email.header import decode_header
 import pathlib
 
 debug = False
+PDFS_ONLY = False
 
-# Godaddy IMAP server: imap.secureserver.net
 IMAP_SERVER = "outlook.office365.com"
 EMAIL_FOLDER = "INBOX"
 
@@ -42,11 +43,22 @@ class Watchdog:
                 if "attachment" in content_disposition:
                     filename = part.get_filename()
                     # only download if the attachment is a pdf and it doesn't already exist
-                    if ".pdf" in filename and not pathlib.Path(filename).is_file():
-                        self.download_attachment(part, filename)
+
+                    # really for in case we need all attachments
+                    if PDFS_ONLY:
+                        if ".pdf" in filename and not pathlib.Path(filename).is_file():
+                            self.download_attachment(part, filename)
+                    else:
+                        if not pathlib.Path(filename).is_file():
+                            self.download_attachment(part, filename)
 
     def download_attachment(self, part, filename):
-        open(filename, "wb").write(part.get_payload(decode=True))
+        attachment_dir = os.path.join(os.path.abspath(__file__), '..', 'attachments')
+        if not os.path.exists(attachment_dir):
+            os.mkdir(attachment_dir)
+
+        filepath = os.path.join(attachment_dir, filename)
+        open(filepath, "wb").write(part.get_payload(decode=True))
 
     def fetch_all_emails(self, msg_num_list):
         for msg_num in msg_num_list:
@@ -63,9 +75,9 @@ class Watchdog:
 
                     self.check_for_attachments(msg)
 
-    def check_for_new_emails(self):
+    def check_for_emails(self, *, inbox_type):
         self.imap.select(EMAIL_FOLDER, readonly=True)  # readonly=True so that unread messages retain unread flag
-        status, messages = self.imap.search(None, "(UNSEEN)")
+        status, messages = self.imap.search(None, inbox_type)
 
         if status == "OK":
 
@@ -75,7 +87,8 @@ class Watchdog:
             self.fetch_all_emails(messages[0].split())
 
     def start(self):
-        self.check_for_new_emails()
+        self.check_for_emails(inbox_type="(UNSEEN)")
+        # self.check_for_emails(inbox_type="(INBOX)")
 
 
 def main():
@@ -89,6 +102,11 @@ def main():
     #     check_for_new_emails(imap)
     #
     #     time.sleep(0.02)
+
+    # chance that the pdf downloaded is not what we're looking for
+    # make file that notes down every pdf we've downloaded already
+    # this is ensured by some id that uniquely identifies the cost
+    # from the company
 
 
 if __name__ == '__main__':
