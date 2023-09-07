@@ -35,3 +35,8 @@ class BaseInvoice(ABC):
     @abstractmethod
     def get_invoice_num(self):
         pass
+
+    @abstractmethod
+    def get_id_num(self):
+        """Should be MAWB, but could be reference num or AWB"""
+        pass

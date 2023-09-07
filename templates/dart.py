@@ -1,4 +1,4 @@
-from invoices.base_invoice import BaseInvoice
+from templates.base_invoice import BaseInvoice
 
 
 class TextDartInvoice(BaseInvoice):
@@ -38,6 +38,11 @@ class TextDartInvoice(BaseInvoice):
     def get_invoice_num(self):
         sub = self.get_substring('INVOICE', 'Page 1 of ')
         return sub
+
+    def get_id_num(self):
+        sub = self.get_substring('FLIGHT / DATE MAWB HAWB', 'ORIGIN ETD DESTINATION ETA')
+        sub = sub.split()
+        return sub[-2]
 
 
 __all__ = [TextDartInvoice.__name__]
