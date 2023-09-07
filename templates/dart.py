@@ -33,8 +33,6 @@ class TextDartInvoice(BaseInvoice):
         sub = sub.split('-')
         return ' '.join([sub[1], sub[0], sub[2]])
 
-        # TODO: the date could be the due date too, right now it's only the invoice date
-
     def get_invoice_num(self):
         sub = self.get_substring('INVOICE', 'Page 1 of ')
         return sub
