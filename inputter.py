@@ -8,14 +8,15 @@ class Inputter:
         Initializes all data needed to be inputted
         or checked by Inputter
 
-        :param data: dictionary of all data
+        :param data
+        dictionary of all data
         - vendor, date, and invoice num should be strings
         - rows should follow this format
         with a list being returned and each
         element representing a row with a billing_code
         and price:
 
-        [
+        "rows": [
             {
                 'billing_code': 'code',
                 'price': 'test_price'
