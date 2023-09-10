@@ -49,7 +49,6 @@ class Inputter:
         # press enter
         # top row will be the correct one
         # then hit F7
-        time.sleep(4)
         gui.click(x=513, y=165)
         time.sleep(2)
         gui.press('f5')
@@ -59,8 +58,14 @@ class Inputter:
         gui.press('enter')
         time.sleep(4)
 
+    def access_accounting(self):
+        gui.press('f7')
+
     def click_account_payable_header(self):
         gui.click(x=645, y=590)
+
+    def access_account_payable(self):
+        gui.press('f2')
 
     def check_existing_vendor_rows(self):
         pass
@@ -101,14 +106,11 @@ class Inputter:
 
     def edit_account_payable_row(self):
         # its own function because the y coordinate will change based on different rows
-        self.edit_billing_code()
-        # self.edit_item_description()
-        self.edit_price()
+        time.sleep(1)
+        self.edit_billing_code('')
 
-    def edit_account_payable_fields(self):
-        self.edit_vendor()
-        self.edit_dates()
-        self.edit_invoice_num()
+        time.sleep(1)
+        self.edit_price('')
 
     def run_full_pipeline(self):
         # click air import
@@ -120,47 +122,43 @@ class Inputter:
         # To create new row, F2
         # Edit Account Payable Fields
 
-        self.click_air_import()
-        time.sleep(2)
-        self.click_mawb_list()
+        # Main screen
         time.sleep(3)
+        self.click_air_import()
 
+        time.sleep(1)
+        self.click_mawb_list()
+
+        # MAWB List screen
+        time.sleep(4)
         self.search_mawb()
 
-        gui.press('f7')
-        time.sleep(2)
+        # Accounting screen
+        time.sleep(1)
+        self.access_accounting()
+
+        time.sleep(4)
         self.click_account_payable_header()
 
-        self.check_existing_vendor_rows()
+        # Account Payable screen
+        time.sleep(1)
+        self.access_account_payable()
 
-        gui.press('f2')
-        time.sleep(3)
-        self.edit_account_payable_fields()
-        time.sleep(2)
+        time.sleep(1)
+        self.edit_vendor()
+
+        time.sleep(1)
+        self.edit_dates()
+
+        time.sleep(1)
+        self.edit_invoice_num()
+
         self.edit_account_payable_row()
 
         # TODO: DO NOT PRESS F12 TO SAVE BECAUSE THAT WILL MAKE CHANGES TO DB
+        # TODO: but eventually you press F12
+
 
 if __name__ == '__main__':
     bot = Inputter({})
-    time.sleep(3)
-    bot.click_air_import()
-    time.sleep(1)
-    bot.click_mawb_list()
-    bot.search_mawb()
-    gui.press('f7')
-    time.sleep(4)
-    bot.click_account_payable_header()
-    time.sleep(1)
-    gui.press('f2')
-    time.sleep(1)
-    bot.edit_vendor()
-    time.sleep(1)
-    bot.edit_dates()
-    time.sleep(1)
-    bot.edit_invoice_num()
-    time.sleep(1)
-    bot.edit_price('')
-    time.sleep(1)
-    bot.edit_billing_code('')
-    
+    bot.run_full_pipeline()
