@@ -1,5 +1,7 @@
 import time
 import pyautogui as gui
+from templates.base_invoice import IDNumType
+from validation import validate_data
 
 
 # rename mawb to just awb
@@ -53,6 +55,9 @@ class Inputter:
         # self.invoice_num = data['invoice_num']
         # self.rows = data['rows']
         # self.id_num = data['id_num']
+
+        validate_data(data)
+
         self.vendor = ''
         self.date = ''
         self.invoice_num = ''
@@ -64,7 +69,7 @@ class Inputter:
     def click_mawb_list(self):
         gui.click(*self.mawb_list_dropdown_option_pt)
 
-    def search_mawb(self):
+    def search_id(self):
         # the invoice does not have a reference number
         # it should be the mawb, so use that instead
         # however, the other steps should be the same
@@ -76,8 +81,10 @@ class Inputter:
         # top row will be the correct one
         # then hit F7
 
-        # TODO: logic here to check if the given dictionary contains a MAWB or internal reference number
-        gui.click(*self.mawb_num_column_first_row_pt)
+        if self.id_num[0] == IDNumType.MAWB:
+            gui.click(*self.mawb_num_column_first_row_pt)
+        elif self.id_num[0] == IDNumType.INTERNAL_REFERENCE:
+            gui.click(*self.reference_num_column_first_row_pt)
         time.sleep(2)
 
         gui.press('f5')
@@ -98,12 +105,30 @@ class Inputter:
         gui.press('f2')
 
     def check_existing_vendor_rows(self):
+        # TODO: implement this check
+
+        # TODO: Handling duplicate pdfs could be checked here
+        # meaning if there is an existing vendor row, then there is a duplicate pdf (or the pdf has already been inputted)
+        # and then the program would stop here.
+        #
+        # It would be a problem if there were so many pdfs coming in, but because a pdf might come in only every 5 hours
+        # or so, it doesn't matter if the program stops to check.
+        # also, this program would run when the computer is not being used, so it doesn't really matter how long it takes
+        # for the bot to determine whether the pdf has been inputted or not.
         pass
 
     def edit_vendor(self):
-        # TODO: has to use % to search
         gui.click(*self.vendor_field_pt)
-        gui.write(self.vendor)
+        gui.write('%' + self.vendor)
+        time.sleep(1)
+
+        gui.press('enter')
+        time.sleep(4)
+
+        # TODO: If needed, OCR the entire column of names and choose from that
+        # click on the first row
+        gui.click(*self.reference_num_column_first_row_pt, clicks=2, interval=0.25)
+        time.sleep(4)
 
     def edit_dates(self):
         # input post
@@ -165,7 +190,7 @@ class Inputter:
         time.sleep(4)
 
         # MAWB List screen
-        self.search_mawb()
+        self.search_id()
         time.sleep(5)
 
         # Accounting screen

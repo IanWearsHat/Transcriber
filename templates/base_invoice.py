@@ -2,6 +2,12 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from vision import Vision
+from enum import Enum
+
+
+class IDNumType(Enum):
+    MAWB = 1
+    INTERNAL_REFERENCE = 2
 
 
 # TODO: perhaps making everything lowercase before processing individual fields
@@ -17,6 +23,11 @@ class BaseInvoice(ABC):
 
     def __init__(self, path, orientation=0, pg_num=0):
         """All rects and formats should be defined in the subclass"""
+        # TODO: table height might change depending on rows.
+        # Whereas MKC has a constant space for every field,
+        # HTC does not have a constant space for prices.
+        # Meaning, the size and shape of the table changes for prices depending
+        # on if there are 2 rows or 3 rows, or any number of rows
         self._prices_rect = None
         self._date_rect = None
         self._date_format = None
@@ -48,8 +59,7 @@ class BaseInvoice(ABC):
 
     @abstractmethod
     def get_date(self):
-        # TODO: needs a way to format dates correctly
-        # maybe have a date format to be loaded ex. for mkc its
+        # A date format has to be loaded ex. for mkc its
         # date_str = '08/01/23'
         # date_format = '%m/%d/%y'
         #
