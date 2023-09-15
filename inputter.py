@@ -52,7 +52,7 @@ class Inputter:
         # self.vendor = data['vendor']
         # self.date = data['date']
         # self.invoice_num = data['invoice_num']
-        # self.rows = data['rows']
+        # self.price_rows = data['rows']
         # self.id_num = data['id_num']
 
 
@@ -165,13 +165,18 @@ class Inputter:
         # TODO: Change the y coordinate for each row
         # TODO: Detect if a row already exists
         # TODO: row might be the same height as in vision, which is 22
-        x, y = self.billing_code_first_row_pt
-        self.edit_billing_code(x, y, '')
-        time.sleep(1)
 
-        x, y = self.price_first_row_pt
-        self.edit_price(x, y, '')
-        time.sleep(1)
+        x, y = self.billing_code_first_row_pt
+
+        for code, price in self.price_rows:
+            self.edit_billing_code(x, y, code)
+            time.sleep(1)
+
+            x, y = self.price_first_row_pt
+            self.edit_price(x, y, price)
+            time.sleep(1)
+
+            y += 22
 
     def run_full_pipeline(self):
         # click air import
@@ -223,4 +228,35 @@ class Inputter:
 
 if __name__ == '__main__':
     bot = Inputter({})
-    bot.run_full_pipeline()
+    # Main screen
+    bot.click_air_import()
+    time.sleep(1)
+
+    bot.click_hawb_list()
+    time.sleep(4)
+
+    # HAWB List screen
+    bot.search_id()
+    time.sleep(5)
+
+    # Accounting screen
+    bot.access_accounting()
+    time.sleep(4)
+
+    bot.click_account_payable_header()
+    time.sleep(1)
+
+    # Account Payable screen
+    bot.access_account_payable()
+    time.sleep(1)
+
+    bot.edit_vendor()
+    time.sleep(1)
+
+    bot.edit_dates()
+    time.sleep(1)
+
+    bot.edit_invoice_num()
+    time.sleep(1)
+
+    bot.edit_account_payable_row()
