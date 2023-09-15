@@ -8,54 +8,52 @@ custom_config = '--psm 4'
 custom_dpi = 120
 
 
-class Vision:
-    @staticmethod
-    def get_text_from_cropped_rect_of_image(ratio_rect: list[float], img, *, debug=False) -> str:
-        height = img.shape[0]
-        width = img.shape[1]
+def get_text_from_cropped_rect_of_image(ratio_rect: list[float], img, *, debug=False) -> str:
+    height = img.shape[0]
+    width = img.shape[1]
 
-        y_start = round(ratio_rect[0] * height)
-        y_end = round(ratio_rect[1] * height)
-        x_start = round(ratio_rect[2] * width)
-        x_end = round(ratio_rect[3] * width)
+    y_start = round(ratio_rect[0] * height)
+    y_end = round(ratio_rect[1] * height)
+    x_start = round(ratio_rect[2] * width)
+    x_end = round(ratio_rect[3] * width)
 
-        cropped = img[y_start:y_end, x_start:x_end]
-        if debug:
-            cv2.imshow("", cropped)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+    cropped = img[y_start:y_end, x_start:x_end]
+    if debug:
+        cv2.imshow("", cropped)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-        return pytess.run_and_get_output(cropped, extension='txt', config=custom_config)
+    return pytess.run_and_get_output(cropped, extension='txt', config=custom_config)
 
-    @staticmethod
-    def get_image(path):
-        img = Vision.convert_pdf_to_image(path)[0] # TODO: invoice might not be on page 0
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        return img
 
-    # https://blog.42mate.com/opencv-tesseract-is-a-powerful-combination/
-    @staticmethod
-    def convert_pdf_to_image(document):
-        images = []
-        images.extend(
-            list(
-                map(
-                    lambda image: cv2.cvtColor(
-                        np.asarray(image), code=cv2.COLOR_RGB2BGR
-                    ),
-                    pdf2image.convert_from_path(document, dpi=custom_dpi),
-                )
+def get_image(path):
+    img = convert_pdf_to_image(path)[0] # TODO: invoice might not be on page 0
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return img
+
+
+# https://blog.42mate.com/opencv-tesseract-is-a-powerful-combination/
+def convert_pdf_to_image(document):
+    images = []
+    images.extend(
+        list(
+            map(
+                lambda image: cv2.cvtColor(
+                    np.asarray(image), code=cv2.COLOR_RGB2BGR
+                ),
+                pdf2image.convert_from_path(document, dpi=custom_dpi),
             )
         )
-        return images
+    )
+    return images
 
-    # https://stackoverflow.com/questions/9041681/opencv-python-rotate-image-by-x-degrees-around-specific-point
-    @staticmethod
-    def rotate_image(image, angle):
-        image_center = tuple(np.array(image.shape[1::-1]) / 2)
-        rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
-        result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
-        return result
+
+# https://stackoverflow.com/questions/9041681/opencv-python-rotate-image-by-x-degrees-around-specific-point
+def rotate_image(image, angle):
+    image_center = tuple(np.array(image.shape[1::-1]) / 2)
+    rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+    result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+    return result
 
 
 # TODO: maybe look at an entire column or table
@@ -72,7 +70,7 @@ Then rotate it by that angle
 """
 
 if __name__ == '__main__':
-    image = Vision.convert_pdf_to_image(r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\HTCargo\HTC230283 CONN.pdf")[0]
+    image = convert_pdf_to_image(r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\HTCargo\HTC230283 CONN.pdf")[0]
 
     # Convert image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

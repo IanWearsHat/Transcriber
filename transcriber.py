@@ -1,34 +1,77 @@
-from PyPDF2 import PdfReader
-from templates import *
+import templates
+from templates.base_invoice import BaseInvoice, IDNumType, VendorType
+import vision
+from validation import validate_data
+from inputter import Inputter
 
 
-path = "./pdfExamples/Dart/INVOICE - VNM00045559 - CONINT_US (30-Aug-23).pdf"
-# path = "./pdfExamples/sample.pdf"
-# path = "./pdfExamples/image.pdf"
+def validate_vendor_name(template):
+    # Vendor name should be in the correct spot
+    intended_name = template.get_template_name()
+    vendor_name = template.get_vendor_name()
 
-# print(
-#     TextDartInvoice(path).get_prices()
-# )
-#
-# print(
-#     TextDartInvoice(path).get_date()
-# )
-#
-# print(
-#     TextDartInvoice(path).get_invoice_num()
-# )
-print(
-    TextDartInvoice(path).get_id_num()
-)
+    if intended_name != vendor_name:  # TODO: perhaps fuzzy match here
+        raise ValueError
 
-# import pyautogui
-#
-# x, y = pyautogui.locateCenterOnScreen('test4.png', grayscale=True, confidence=0.6)
-# pyautogui.moveTo(x, y)
-# print(x, y)
-# Problem: the image might not work at different resolutions, either with the monitor or the image
-# One solution:
-# Use cv to generate a bunch of resized images
-# find a match using all of those images, which might not work according to the creator of PyAutoGUI
-# https://stackoverflow.com/questions/45302681/running-pyautogui-on-a-different-computer-with-different-resolution
 
+def validate_prices(template):
+    # Prices should all be numeric
+    prices = template.get_prices()
+    for price in prices.values():
+        if not price.replace('.', '').isnumeric():
+            raise ValueError
+
+
+def validate_id_num(template):
+    # id num should be in a format depending on whether it uses MAWB, HAWB, or Internal Ref Num
+    id_type, id_num = template.get_id_num()
+    if id_type == IDNumType.MAWB:
+        if not id_num.isnumeric() and len(id_num) != 11:
+            raise ValueError
+    elif id_type == IDNumType.INTERNAL_REFERENCE:
+        if id_num[:3] != 'LAI' and not id_num[3:].isnumeric() and len(id_num) != 11:
+            raise ValueError
+
+
+def validate_date(template):
+    # Date should not be None
+    date = template.get_date()
+    if date is None:
+        raise ValueError
+
+
+def determine_invoice_template(path):
+    template_gen = (cls for cls in templates.__dict__.values() if isinstance(cls, type))
+    for template_cls in template_gen:
+        img = vision.get_image(path)  # TODO: invoice might not be on page 0
+
+        template_obj = template_cls(img)
+
+        try:
+            validate_vendor_name(template_obj)
+            validate_prices(template_obj)
+            validate_id_num(template_obj)
+            validate_date(template_obj)
+
+            return template_obj
+        except ValueError:
+            continue
+
+    return None
+
+
+def transcribe():
+    path = ''
+    inv_cls = determine_invoice_template(path)
+
+    if inv_cls is not None:
+        inv_data = inv_cls.get_data()
+        validate_data(inv_data)
+
+        Inputter(inv_data).run_full_pipeline()
+
+
+if __name__ == '__main__':
+    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604764.pdf"
+    inv_obj = determine_invoice_template(path)
+    print(inv_obj.get_data())

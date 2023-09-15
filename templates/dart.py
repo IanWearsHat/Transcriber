@@ -7,15 +7,17 @@ class TextDartInvoice(BaseInvoice):
 
     Best case scenario as shown in VNM00042074
     """
-    def clean_price(self, price: str):
-        price = price.replace(',', "").replace('.', "")
-        return price[:-2] + '.' + price[-2:]
+    def get_template_name(self):
+        return 'Dart'
+
+    def get_vendor_name(self):
+        pass
 
     def get_prices(self) -> dict:
         pass
 
     def get_date(self):
-        pass
+        return 'hi'
 
     def get_invoice_num(self):
         pass

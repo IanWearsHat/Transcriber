@@ -1,7 +1,6 @@
 import time
 import pyautogui as gui
 from templates.base_invoice import IDNumType
-from validation import validate_data
 
 
 # rename mawb to just awb
@@ -9,9 +8,10 @@ from validation import validate_data
 class Inputter:
     # Main menu
     nav_bar_air_import_option_pt = (415, 45)
-    mawb_list_dropdown_option_pt = (480, 104)
+    hawb_list_dropdown_option_pt = (480, 108)
 
-    # MAWB List
+    # HAWB List
+    # TODO: These 2 are not correct, they have to be in the HAWB list
     reference_num_column_first_row_pt = (513, 165)
     mawb_num_column_first_row_pt = (366, 165)
 
@@ -41,8 +41,7 @@ class Inputter:
 
         "rows": [
             {
-                'billing_code': 'code',
-                'price': 'test_price'
+                'billing_code': price
             }
         ]
 
@@ -56,7 +55,6 @@ class Inputter:
         # self.rows = data['rows']
         # self.id_num = data['id_num']
 
-        validate_data(data)
 
         self.vendor = ''
         self.date = ''
@@ -66,8 +64,8 @@ class Inputter:
     def click_air_import(self):
         gui.click(*self.nav_bar_air_import_option_pt)
 
-    def click_mawb_list(self):
-        gui.click(*self.mawb_list_dropdown_option_pt)
+    def click_hawb_list(self):
+        gui.click(*self.hawb_list_dropdown_option_pt)
 
     def search_id(self):
         # the invoice does not have a reference number
@@ -149,6 +147,9 @@ class Inputter:
         # TODO: have to type to search
         gui.click(x=x, y=y)
         gui.write(billing_code)
+        time.sleep(1)
+
+        gui.press('enter')
 
     def edit_item_description(self):
         # might not actually need to change this bc billing code
@@ -163,6 +164,7 @@ class Inputter:
         # its own function because the y coordinate will change based on different rows
         # TODO: Change the y coordinate for each row
         # TODO: Detect if a row already exists
+        # TODO: row might be the same height as in vision, which is 22
         x, y = self.billing_code_first_row_pt
         self.edit_billing_code(x, y, '')
         time.sleep(1)
@@ -186,10 +188,10 @@ class Inputter:
         self.click_air_import()
         time.sleep(1)
 
-        self.click_mawb_list()
+        self.click_hawb_list()
         time.sleep(4)
 
-        # MAWB List screen
+        # HAWB List screen
         self.search_id()
         time.sleep(5)
 
