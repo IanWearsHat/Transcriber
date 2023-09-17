@@ -11,9 +11,8 @@ class Inputter:
     hawb_list_dropdown_option_pt = (480, 108)
 
     # HAWB List
-    # TODO: These 2 are not correct, they have to be in the HAWB list
     reference_num_column_first_row_pt = (513, 165)
-    mawb_num_column_first_row_pt = (366, 165)
+    mawb_num_column_first_row_pt = (1011, 165)
 
     # Accounting
     account_payable_header_pt = (645, 590)
@@ -49,17 +48,25 @@ class Inputter:
         being the num type (ex. MAWB, Internal Reference Num)
         and the second element being the actual number
         """
-        # self.vendor = data['vendor']
-        # self.date = data['date']
-        # self.invoice_num = data['invoice_num']
-        # self.price_rows = data['rows']
-        # self.id_num = data['id_num']
+        data = {
+            "vendor": 'MKC CUSTOMS BROKERS',
+            "date": '072823',
+            "invoice_num": '0604751',
+            "rows": {
+                    "AICUSTOM": "23",
+                    "AI-DUTY": "32"
+            },
+            "id_num": (IDNumType.MAWB, '15792303271')
+        }
 
-
-        self.vendor = ''
-        self.date = ''
-        self.invoice_num = ''
-        self.id_num = ''
+        # TODO: date should have no slashes and just have numbers
+        
+        self.vendor = data['vendor']
+        self.date = data['date']
+        self.invoice_num = data['invoice_num']
+        self.price_rows = data['rows']
+        self.id_num_type = data['id_num'][0]
+        self.id_num = data['id_num'][1]
 
     def click_air_import(self):
         gui.click(*self.nav_bar_air_import_option_pt)
@@ -79,9 +86,9 @@ class Inputter:
         # top row will be the correct one
         # then hit F7
 
-        if self.id_num[0] == IDNumType.MAWB:
+        if self.id_num_type == IDNumType.MAWB:
             gui.click(*self.mawb_num_column_first_row_pt)
-        elif self.id_num[0] == IDNumType.INTERNAL_REFERENCE:
+        elif self.id_num_type == IDNumType.INTERNAL_REFERENCE:
             gui.click(*self.reference_num_column_first_row_pt)
         time.sleep(2)
 
@@ -126,7 +133,6 @@ class Inputter:
         # TODO: If needed, OCR the entire column of names and choose from that
         # click on the first row
         gui.click(*self.reference_num_column_first_row_pt, clicks=2, interval=0.25)
-        time.sleep(4)
 
     def edit_dates(self):
         # input post
@@ -143,40 +149,32 @@ class Inputter:
         gui.click(*self.invoice_num_field_pt)
         gui.write(self.invoice_num)
 
-    def edit_billing_code(self, x, y, billing_code):
-        # TODO: have to type to search
-        gui.click(x=x, y=y)
-        gui.write(billing_code)
-        time.sleep(1)
+    def click_billing_code_field(self):
+        gui.click(*self.billing_code_first_row_pt)
 
-        gui.press('enter')
+    def edit_billing_code(self, billing_code):
+        gui.write(billing_code, interval=0.2)
 
-    def edit_item_description(self):
-        # might not actually need to change this bc billing code
-        # will autofill it
-        gui.click(x=260, y=500)
-
-    def edit_price(self, x, y, price):
-        gui.click(x=x, y=y)
-        gui.write(price)
+    def edit_price(self, price):
+        gui.write(price, interval=0.2)
 
     def edit_account_payable_row(self):
-        # its own function because the y coordinate will change based on different rows
-        # TODO: Change the y coordinate for each row
         # TODO: Detect if a row already exists
-        # TODO: row might be the same height as in vision, which is 22
 
-        x, y = self.billing_code_first_row_pt
+        self.click_billing_code_field()
 
-        for code, price in self.price_rows:
-            self.edit_billing_code(x, y, code)
+        for code, price in self.price_rows.items():
+            self.edit_billing_code(code)
             time.sleep(1)
 
-            x, y = self.price_first_row_pt
-            self.edit_price(x, y, price)
+            gui.press('tab', presses=2, interval=0.1)
             time.sleep(1)
 
-            y += 22
+            self.edit_price(price)
+            time.sleep(1)
+
+            gui.press('tab', presses=3, interval=0.1)
+            time.sleep(1)
 
     def run_full_pipeline(self):
         # click air import
@@ -228,12 +226,13 @@ class Inputter:
 
 if __name__ == '__main__':
     bot = Inputter({})
+    time.sleep(3)
     # Main screen
     bot.click_air_import()
     time.sleep(1)
 
     bot.click_hawb_list()
-    time.sleep(4)
+    time.sleep(5)
 
     # HAWB List screen
     bot.search_id()
@@ -241,17 +240,17 @@ if __name__ == '__main__':
 
     # Accounting screen
     bot.access_accounting()
-    time.sleep(4)
+    time.sleep(5)
 
     bot.click_account_payable_header()
     time.sleep(1)
 
     # Account Payable screen
     bot.access_account_payable()
-    time.sleep(1)
+    time.sleep(3)
 
     bot.edit_vendor()
-    time.sleep(1)
+    time.sleep(2)
 
     bot.edit_dates()
     time.sleep(1)
