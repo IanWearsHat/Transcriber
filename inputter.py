@@ -74,11 +74,7 @@ class Inputter:
     def click_hawb_list(self):
         gui.click(*self.hawb_list_dropdown_option_pt)
 
-    def search_id(self):
-        # the invoice does not have a reference number
-        # it should be the mawb, so use that instead
-        # however, the other steps should be the same
-        
+    def search_id(self):  
         # click on reference number column
         # press F5
         # enter search term

@@ -22,25 +22,26 @@ def _delete_all_new_attachments():
 
 def main():
     run = True
-    i = 0
-    while run:
-        if keyboard.is_pressed('p'):
-            run = False
+    # while run:
+    if keyboard.is_pressed('p'):
+        run = False
 
-        watcher = Watchdog()
-        watcher.run()
+    watcher = Watchdog()
+    watcher.run()
 
-        # TODO: currently keeps redownloading the same pdfs because the method that reads from inbox does not mark the emails as read
-        if _has_new_attachments():
-            for pdf_path in _get_all_new_attachments():
-                data = transcribe(pdf_path)
+    # TODO: currently keeps redownloading the same pdfs because the method that reads from inbox does not mark the emails as read
+    if _has_new_attachments():
+        for pdf_path in _get_all_new_attachments():
+            time.sleep(10)
 
-                Inputter(data).run_full_pipeline()
+            data = transcribe(pdf_path)
 
-        _delete_all_new_attachments()
+            Inputter(data).run_full_pipeline()
 
-        # time.sleep(2)
-        time.sleep(0.02)
+    _delete_all_new_attachments()
+
+    # time.sleep(2)
+    time.sleep(0.02)
 
 
 if __name__ == '__main__':

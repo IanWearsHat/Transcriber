@@ -151,13 +151,22 @@ class BaseInvoice(ABC):
             })
 
         return code_dict
+    
+    def change_floats_to_strings(self, in_dict):
+        for code in in_dict.keys():
+            in_dict[code] = str(in_dict[code])
 
     def determine_billing_codes_and_prices(self, prices_dict) -> dict:
+        return_dict = None
         if self._vendor_type == VendorType.TRUCKING:
-            return self.get_trucking_dict(prices_dict)
+            return_dict = self.get_trucking_dict(prices_dict)
         elif self._vendor_type == VendorType.CUSTOMS:
-            return self.get_customs_dict(prices_dict)
+            return_dict = self.get_customs_dict(prices_dict)
         elif self._vendor_type == VendorType.AGENT:
-            return self.get_agent_dict(prices_dict)
+            return_dict = self.get_agent_dict(prices_dict)
         elif self._vendor_type == VendorType.ISC:
             pass
+        
+        self.change_floats_to_strings(return_dict)
+    
+        return return_dict
