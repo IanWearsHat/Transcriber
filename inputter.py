@@ -38,26 +38,26 @@ class Inputter:
         element representing a row with a billing_code
         and price:
 
-        "rows": [
-            {
-                'billing_code': price
-            }
-        ]
+        "rows": {
+            'billing_code': price
+        }
 
         - id_num should be a tuple with the first element
         being the num type (ex. MAWB, Internal Reference Num)
         and the second element being the actual number
+
+        ex.
+            data = {
+                "vendor": 'MKC CUSTOMS BROKERS',
+                "date": '072823',
+                "invoice_num": '0604751',
+                "rows": {
+                        "AICUSTOM": "23",
+                        "AI-DUTY": "32"
+                },
+                "id_num": (IDNumType.MAWB, '15792303271')
+            }
         """
-        data = {
-            "vendor": 'MKC CUSTOMS BROKERS',
-            "date": '072823',
-            "invoice_num": '0604751',
-            "rows": {
-                    "AICUSTOM": "23",
-                    "AI-DUTY": "32"
-            },
-            "id_num": (IDNumType.MAWB, '15792303271')
-        }
 
         # TODO: date should have no slashes and just have numbers
         
@@ -185,40 +185,49 @@ class Inputter:
         # click on existing row if vendor exists, then F2
         # To create new row, F2
         # Edit Account Payable Fields
-        time.sleep(3)
 
-        # Main screen
-        self.click_air_import()
-        time.sleep(1)
+        print("RUNNING INPUTTER")
+        print(self.vendor)
+        print(self.date)
+        print(self.invoice_num)
+        print(self.id_num_type)
+        print(self.id_num)
+        print(self.price_rows)
 
-        self.click_hawb_list()
-        time.sleep(5)
+        # time.sleep(3)
 
-        # HAWB List screen
-        self.search_id()
-        time.sleep(5)
+        # # Main screen
+        # self.click_air_import()
+        # time.sleep(1)
 
-        # Accounting screen
-        self.access_accounting()
-        time.sleep(5)
+        # self.click_hawb_list()
+        # time.sleep(5)
 
-        self.click_account_payable_header()
-        time.sleep(1)
+        # # HAWB List screen
+        # self.search_id()
+        # time.sleep(5)
 
-        # Account Payable screen
-        self.access_account_payable()
-        time.sleep(3)
+        # # Accounting screen
+        # self.access_accounting()
+        # time.sleep(5)
 
-        self.edit_vendor()
-        time.sleep(2)
+        # self.click_account_payable_header()
+        # time.sleep(1)
 
-        self.edit_dates()
-        time.sleep(1)
+        # # Account Payable screen
+        # self.access_account_payable()
+        # time.sleep(3)
 
-        self.edit_invoice_num()
-        time.sleep(1)
+        # self.edit_vendor()
+        # time.sleep(2)
 
-        self.edit_account_payable_row()
+        # self.edit_dates()
+        # time.sleep(1)
+
+        # self.edit_invoice_num()
+        # time.sleep(1)
+
+        # self.edit_account_payable_row()
 
         # TODO: DO NOT PRESS F12 TO SAVE BECAUSE THAT WILL MAKE CHANGES TO DB
         # TODO: but eventually you press F12

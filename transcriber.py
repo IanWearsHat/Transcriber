@@ -5,7 +5,7 @@ from validation import validate_data
 from inputter import Inputter
 
 
-def validate_vendor_name(template):
+def _validate_vendor_name(template):
     # Vendor name should be in the correct spot
     intended_name = template.get_template_name()
     vendor_name = template.get_vendor_name()
@@ -14,7 +14,7 @@ def validate_vendor_name(template):
         raise ValueError
 
 
-def validate_prices(template):
+def _validate_prices(template):
     # Prices should all be numeric
     prices = template.get_prices()
     for price in prices.values():
@@ -22,7 +22,7 @@ def validate_prices(template):
             raise ValueError
 
 
-def validate_id_num(template):
+def _validate_id_num(template):
     # id num should be in a format depending on whether it uses MAWB, HAWB, or Internal Ref Num
     id_type, id_num = template.get_id_num()
     if id_type == IDNumType.MAWB:
@@ -33,7 +33,7 @@ def validate_id_num(template):
             raise ValueError
 
 
-def validate_date(template):
+def _validate_date(template):
     # Date should not be None
     date = template.get_date()
     if date is None:
@@ -48,10 +48,10 @@ def determine_invoice_template(path):
         template_obj = template_cls(img)
 
         try:
-            validate_vendor_name(template_obj)
-            validate_prices(template_obj)
-            validate_id_num(template_obj)
-            validate_date(template_obj)
+            _validate_vendor_name(template_obj)
+            _validate_prices(template_obj)
+            _validate_id_num(template_obj)
+            _validate_date(template_obj)
 
             return template_obj
         except ValueError:
@@ -60,15 +60,14 @@ def determine_invoice_template(path):
     return None
 
 
-def transcribe():
-    path = ''
+def transcribe(path):
     inv_cls = determine_invoice_template(path)
 
     if inv_cls is not None:
         inv_data = inv_cls.get_data()
         validate_data(inv_data)
 
-        Inputter(inv_data).run_full_pipeline()
+        return inv_data
 
 
 if __name__ == '__main__':

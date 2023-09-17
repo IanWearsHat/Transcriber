@@ -1,22 +1,23 @@
 from datetime import datetime
-from templates.base_invoice import BaseInvoice
+from templates.base_invoice import BaseInvoice, IDNumType
 
 
 def validate_data(data):
-    if data['vendor'] is not str or \
-            data['invoice_num'] is not str or \
-            data['id_num'] is not str:
-        raise TypeError
+    if type(data['vendor']) is not str or \
+            type(data['id_num'][0]) is not IDNumType or \
+            type(data['id_num'][1]) is not str or \
+            type(data['invoice_num']) is not str:
+        raise TypeError("Vendor, invoice num, or id num is not string.")
 
     try:
         datetime.strptime(data['date'], BaseInvoice.STD_DATE_FORMAT)
     except ValueError:
         raise ValueError("Date is not in standard format defined in BaseInvoice.")
 
-    if data['rows'] is not list:
-        raise TypeError
+    if type(data['rows']) is not dict:
+        raise TypeError("Rows should be dict.")
 
-    for row in data['rows']:
-        if row['billing_code'] is not int or \
-                not row['price'].isnumeric():
-            raise TypeError
+    for billing_code, price in data['rows'].items():
+        if type(billing_code) is not str or \
+                type(price) is not float:
+            raise TypeError("Billing code should be string and price should be numeric")
