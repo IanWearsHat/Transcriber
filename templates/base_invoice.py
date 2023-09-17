@@ -24,7 +24,7 @@ class BaseInvoice(ABC):
     Each should return what is exactly inputted into FreightStream
     """
 
-    STD_DATE_FORMAT = "%m/%d/%y"
+    STD_DATE_FORMAT = "%m%d%Y"
 
     def __init__(self, img, orientation=0, pg_num=0):
         """All rects and formats should be defined in the subclass"""
@@ -42,12 +42,12 @@ class BaseInvoice(ABC):
         self._date_rect = None
 
         self._date_format = None
-        self._template_name = None
-        self._internal_name = None
+        self._name_on_invoice = None
+        self._freight_stream_internal_name = None
         self._vendor_type = None
 
     @abstractmethod
-    def get_template_name(self):
+    def get_name_on_invoice(self):
         pass
 
     # in the future should have a config file of all the boxes for invoices

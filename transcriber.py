@@ -5,13 +5,13 @@ from validation import validate_data
 from inputter import Inputter
 
 
-def _validate_vendor_name(template):
+def _validate_vendor_name(template: BaseInvoice):
     # Vendor name should be in the correct spot
-    intended_name = template.get_template_name()
+    intended_name = template.get_get_name_on_invoice()
     vendor_name = template.get_vendor_name()
 
     if intended_name != vendor_name:  # TODO: perhaps fuzzy match here
-        raise ValueError
+        raise ValueError("Names do not match")
 
 
 def _validate_prices(template):
@@ -19,25 +19,25 @@ def _validate_prices(template):
     prices = template.get_prices()
     for price in prices.values():
         if not price.replace('.', '').isnumeric():
-            raise ValueError
+            raise ValueError("Prices are not numeric")
 
 
 def _validate_id_num(template):
     # id num should be in a format depending on whether it uses MAWB, HAWB, or Internal Ref Num
     id_type, id_num = template.get_id_num()
     if id_type == IDNumType.MAWB:
-        if not id_num.isnumeric() and len(id_num) != 11:
-            raise ValueError
+        if not id_num.isnumeric() or len(id_num) != 11:
+            raise ValueError("ID num is not numeric or not correct length")
     elif id_type == IDNumType.INTERNAL_REFERENCE:
-        if id_num[:3] != 'LAI' and not id_num[3:].isnumeric() and len(id_num) != 11:
-            raise ValueError
+        if id_num[:3] != 'LAI' or not id_num[3:].isnumeric() or len(id_num) != 11:
+            raise ValueError("ID num doesn't start with LAI or isn't numeric or isn't correct length")
 
 
 def _validate_date(template):
     # Date should not be None
     date = template.get_date()
     if date is None:
-        raise ValueError
+        raise ValueError("Date isn't correct")
 
 
 def determine_invoice_template(path):

@@ -21,6 +21,9 @@ def _delete_all_new_attachments():
 
 
 def main():
+    # TODO: needs to focus on FreightStream if it's open
+    # TODO: needs to open and then focus on FreightStream if it's not open
+    # TODO: if there are multiple pdfs that have been downloaded, then close all tabs except for hawb list and then go from there instead of having to open up all tabs over again
     run = True
     # while run:
     if keyboard.is_pressed('p'):
@@ -45,4 +48,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    import vision
+    from templates.mkc import TextMKCInvoice
+    img = vision.get_image(r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf")
+    inv = TextMKCInvoice(img)
+    print(inv.get_vendor_name())
+    print(inv.get_prices())
+    print(inv.get_id_num())
+    print(inv.get_date())
+    print(inv.get_invoice_num())

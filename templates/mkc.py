@@ -5,6 +5,7 @@ import vision
 class TextMKCInvoice(BaseInvoice):
     def __init__(self, path, orientation=0, pg_num=0):
         super().__init__(path, orientation, pg_num)
+        # TODO: These rects should be read from a config file
         self._vendor_name_rect = [0.05606060606060606, 0.07196969696969698, 0.5843137254901961, 0.7745098039215687]
         self._prices_rect = [0.5143939393939394, 0.803030303030303, 0.07549019607843137, 0.9372549019607843]
         self._id_num_rect = [0.39090909090909093, 0.4121212121212121, 0.08823529411764706, 0.9137254901960784]
@@ -13,12 +14,12 @@ class TextMKCInvoice(BaseInvoice):
 
         self._date_format = '%m/%d/%y'
 
-        self._template_name = 'MKC CUSTOMS BROKERS'
-        self._internal_name = "MKC CUSTOMS BROKERS INT'L. CO."
+        self._name_on_invoice = 'MKC CUSTOMS BROKERS'
+        self.__freight_stream_internal_name = "MKC CUSTOMS BROKERS INT'L. CO."
         self._vendor_type = VendorType.CUSTOMS
 
-    def get_template_name(self):
-        return self._template_name
+    def get_name_on_invoice(self):
+        return self._name_on_invoice
 
     def get_vendor_name(self):
         text = vision.get_text_from_cropped_rect_of_image(self._vendor_name_rect, self.page_img).strip()
@@ -55,7 +56,7 @@ class TextMKCInvoice(BaseInvoice):
 
     def get_data(self) -> dict:
         data = {
-            "vendor": self._internal_name,
+            "vendor": self.__freight_stream_internal_name,
             "date": self.get_date(),
             "invoice_num": self.get_invoice_num(),
             "id_num": self.get_id_num(),
@@ -67,13 +68,3 @@ class TextMKCInvoice(BaseInvoice):
 
 
 __all__ = [TextMKCInvoice.__name__]
-
-
-if __name__ == '__main__':
-    img = vision.get_image(r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf")
-    inv = TextMKCInvoice(img)
-    print(inv.get_vendor_name())
-    print(inv.get_prices())
-    print(inv.get_id_num())
-    print(inv.get_date())
-    print(inv.get_invoice_num())
