@@ -192,7 +192,7 @@ class Inputter:
         time.sleep(1)
 
         self.click_hawb_list()
-        time.sleep(4)
+        time.sleep(5)
 
         # HAWB List screen
         self.search_id()
@@ -200,17 +200,17 @@ class Inputter:
 
         # Accounting screen
         self.access_accounting()
-        time.sleep(4)
+        time.sleep(5)
 
         self.click_account_payable_header()
         time.sleep(1)
 
         # Account Payable screen
         self.access_account_payable()
-        time.sleep(1)
+        time.sleep(3)
 
         self.edit_vendor()
-        time.sleep(1)
+        time.sleep(2)
 
         self.edit_dates()
         time.sleep(1)
@@ -227,35 +227,39 @@ class Inputter:
 if __name__ == '__main__':
     bot = Inputter({})
     time.sleep(3)
-    # Main screen
-    bot.click_air_import()
-    time.sleep(1)
+    bot.run_full_pipeline()
 
-    bot.click_hawb_list()
-    time.sleep(5)
+    debug = False
+    if debug:
+        # Main screen
+        bot.click_air_import()
+        time.sleep(1)
 
-    # HAWB List screen
-    bot.search_id()
-    time.sleep(5)
+        bot.click_hawb_list()
+        time.sleep(5)
 
-    # Accounting screen
-    bot.access_accounting()
-    time.sleep(5)
+        # HAWB List screen
+        bot.search_id()
+        time.sleep(5)
 
-    bot.click_account_payable_header()
-    time.sleep(1)
+        # Accounting screen
+        bot.access_accounting()
+        time.sleep(5)
 
-    # Account Payable screen
-    bot.access_account_payable()
-    time.sleep(3)
+        bot.click_account_payable_header()
+        time.sleep(1)
 
-    bot.edit_vendor()
-    time.sleep(2)
+        # Account Payable screen
+        bot.access_account_payable()
+        time.sleep(3)
 
-    bot.edit_dates()
-    time.sleep(1)
+        bot.edit_vendor()
+        time.sleep(2)
 
-    bot.edit_invoice_num()
-    time.sleep(1)
+        bot.edit_dates()
+        time.sleep(1)
 
-    bot.edit_account_payable_row()
+        bot.edit_invoice_num()
+        time.sleep(1)
+
+        bot.edit_account_payable_row()

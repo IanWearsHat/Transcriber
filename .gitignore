@@ -2,4 +2,5 @@
 *.pdf
 *.png
 *.xlsx
+*.pyc
 .idea/
