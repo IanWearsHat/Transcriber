@@ -3,8 +3,8 @@ import vision
 
 
 class TextMKCInvoice(BaseInvoice):
-    def __init__(self, path, orientation=0, pg_num=0):
-        super().__init__(path, orientation, pg_num)
+    def __init__(self, img, orientation=0, pg_num=0):
+        super().__init__(img, orientation, pg_num)
         # TODO: These rects should be read from a config file
         self._vendor_name_rect = [0.05606060606060606, 0.07196969696969698, 0.5843137254901961, 0.7745098039215687]
         self._prices_rect = [0.5143939393939394, 0.803030303030303, 0.07549019607843137, 0.9372549019607843]
@@ -15,7 +15,7 @@ class TextMKCInvoice(BaseInvoice):
         self._date_format = '%m/%d/%y'
 
         self._name_on_invoice = 'MKC CUSTOMS BROKERS'
-        self.__freight_stream_internal_name = "MKC CUSTOMS BROKERS INT'L. CO."
+        self._freight_stream_internal_name = "MKC CUSTOMS BROKERS INT'L. CO."
         self._vendor_type = VendorType.CUSTOMS
 
     def get_name_on_invoice(self):
@@ -53,18 +53,6 @@ class TextMKCInvoice(BaseInvoice):
         for i in range(len(split_text)):
             if self.contains_num(split_text[i]) and split_text[i-1].find("Master") != -1:
                 return IDNumType.MAWB, split_text[i].replace(',', '').replace(':', ' ')
-
-    def get_data(self) -> dict:
-        data = {
-            "vendor": self.__freight_stream_internal_name,
-            "date": self.get_date(),
-            "invoice_num": self.get_invoice_num(),
-            "id_num": self.get_id_num(),
-            "rows": self.determine_billing_codes_and_prices(
-                self.get_prices()
-            )
-        }
-        return data
 
 
 __all__ = [TextMKCInvoice.__name__]

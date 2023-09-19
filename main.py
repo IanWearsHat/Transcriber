@@ -50,11 +50,15 @@ def main():
 if __name__ == '__main__':
     # main()
     import vision
-    from templates.mkc import TextMKCInvoice
-    img = vision.get_image(r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf")
-    inv = TextMKCInvoice(img)
-    print(inv.get_vendor_name())
+    from templates.robert_kong import TextRKInvoice
+
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033366.pdf"
+    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
+    img = vision.get_image(path)
+    inv = TextRKInvoice(img)
+    # inv.get_prices_table()
+    # print(inv.get_vendor_name())
     print(inv.get_prices())
-    print(inv.get_id_num())
-    print(inv.get_date())
-    print(inv.get_invoice_num())
+    # print(inv.get_id_num())
+    # print(inv.get_date())
+    # print(inv.get_invoice_num())

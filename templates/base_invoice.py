@@ -80,6 +80,18 @@ class BaseInvoice(ABC):
         # date_obj = datetime.strptime(date_str, date_format)
         pass
 
+    def get_data(self) -> dict:
+        data = {
+            "vendor": self._freight_stream_internal_name,
+            "date": self.get_date(),
+            "invoice_num": self.get_invoice_num(),
+            "id_num": self.get_id_num(),
+            "rows": self.determine_billing_codes_and_prices(
+                self.get_prices()
+            )
+        }
+        return data
+
     def clean_price(self, price: str):
         price = price.replace(',', "").replace('.', "")
         return price[:-2] + '.' + price[-2:]
