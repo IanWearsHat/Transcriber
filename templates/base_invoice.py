@@ -35,26 +35,18 @@ class BaseInvoice(ABC):
         # on if there are 2 rows or 3 rows, or any number of rows
         self.page_img = img
 
-        self._vendor_name_rect = None
         self._prices_rect = None
         self._invoice_num_rect = None
         self._id_num_rect = None
         self._date_rect = None
 
         self._date_format = None
-        self._name_on_invoice = None
         self._freight_stream_internal_name = None
         self._vendor_type = None
 
-    @abstractmethod
-    def get_name_on_invoice(self):
-        pass
 
     # in the future should have a config file of all the boxes for invoices
     # these should be automatically initialized from the file on class creation
-    @abstractmethod
-    def get_vendor_name(self):
-        pass
 
     @abstractmethod
     def get_prices(self) -> dict:
@@ -80,9 +72,12 @@ class BaseInvoice(ABC):
         # date_obj = datetime.strptime(date_str, date_format)
         pass
 
+    def get_internal_name(self):
+        return self._freight_stream_internal_name
+
     def get_data(self) -> dict:
         data = {
-            "vendor": self._freight_stream_internal_name,
+            "vendor": self.get_internal_name(),
             "date": self.get_date(),
             "invoice_num": self.get_invoice_num(),
             "id_num": self.get_id_num(),

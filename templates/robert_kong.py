@@ -7,26 +7,24 @@ class TextRKInvoice(BaseInvoice):
         super().__init__(img, orientation, pg_num)
         self._boxes = vision.get_relevant_boxes(img)
 
-        self._prices_table_rect = [22, 43, 21, 125]
-        self._info_table_rect = [22, 43, 21, 132]
+        self._prices_table_check_rect = [22, 43, 21, 125]
+        self._info_table_check_rect = [22, 43, 21, 132]
 
         self._prices_table = self.get_prices_table()
         self._info_table = self.get_info_table()
 
-        self._vendor_name_rect = None
         self._prices_rect = self.get_price_rect()
-        self._invoice_num_rect = None
-        self._id_num_rect = None
-        self._date_rect = None
+        self._invoice_num_rect = [37, 64, 19, 120]
+        self._id_num_rect = [79, 103, 434, 600]
+        self._date_rect = [37, 59, 218, 328]
 
-        self._date_format = None
-        self._name_on_invoice = None
+        self._date_format = '%m/%d/%y'
         self._freight_stream_internal_name = None
-        self._vendor_type = None
+        self._vendor_type = VendorType.CUSTOMS
 
     def get_prices_table(self):
         for box in self._boxes:
-            text = vision.get_text_from_cropped_rect_of_image(self._prices_table_rect, box, has_pixel_values=True)
+            text = vision.get_text_from_cropped_rect_of_image(self._prices_table_check_rect, box, has_pixel_values=True)
             if 'description' in text.lower():
                 box[:40, 0:len(box[1])] = (255)
                 return box
@@ -34,7 +32,7 @@ class TextRKInvoice(BaseInvoice):
 
     def get_info_table(self):
         for box in self._boxes:
-            text = vision.get_text_from_cropped_rect_of_image(self._info_table_rect, box, has_pixel_values=True)
+            text = vision.get_text_from_cropped_rect_of_image(self._info_table_check_rect, box, has_pixel_values=True)
             if 'invoice' in text.lower():
                 return box
         return None
@@ -59,12 +57,6 @@ class TextRKInvoice(BaseInvoice):
         
         # TODO: change to ratios
         return [smallest[1], largest[1], smallest[0], largest[0]]
-
-    def get_name_on_invoice(self):
-        return super().get_name_on_invoice()
-    
-    def get_vendor_name(self):
-        return super().get_vendor_name()
     
     def get_prices(self) -> dict:
         # TODO: change has_pixel_values to false after changing prices rect to ratios
@@ -81,10 +73,16 @@ class TextRKInvoice(BaseInvoice):
         return prices_dict
 
     def get_date(self):
-        return super().get_date()
+        text = vision.get_text_from_cropped_rect_of_image(self._date_rect, self._info_table, has_pixel_values=True).strip()
+        return self.format_date(text)
     
     def get_invoice_num(self):
-        return super().get_invoice_num()
+        text = vision.get_text_from_cropped_rect_of_image(self._invoice_num_rect, self._info_table, has_pixel_values=True).strip()
+        return text
     
     def get_id_num(self):
-        return super().get_id_num()
+        text = vision.get_text_from_cropped_rect_of_image(self._id_num_rect, self._info_table, has_pixel_values=True).strip()
+        return IDNumType.MAWB, text
+
+
+__all__ = [TextRKInvoice.__name__]
