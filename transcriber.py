@@ -11,7 +11,7 @@ def _validate_name(template):
     vendor_name = template.get_vendor_name()
 
     if intended_name != vendor_name:  # TODO: perhaps fuzzy match here
-        raise ValueError("Names do not match")
+        raise Exception("Names do not match")
 
 def _validate_prices(template):
     # Prices should all be numeric
@@ -41,9 +41,8 @@ def _validate_date(template):
 
 def determine_invoice_template(path):
     template_gen = (cls for cls in templates.__dict__.values() if isinstance(cls, type))
+    img = vision.get_image(path)  # TODO: invoice might not be on page 0
     for template_cls in template_gen:
-        img = vision.get_image(path)  # TODO: invoice might not be on page 0
-
         try:
             template_obj = template_cls(img)
 
@@ -75,7 +74,7 @@ def transcribe(path):
 
 
 if __name__ == '__main__':
-    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604764.pdf"
-    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604764.pdf"
+    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
     inv_obj = determine_invoice_template(path)
     print(inv_obj.get_data())

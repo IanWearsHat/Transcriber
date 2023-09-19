@@ -35,10 +35,11 @@ class BaseInvoice(ABC):
         # on if there are 2 rows or 3 rows, or any number of rows
         self.page_img = img
 
-        self._prices_rect = None
-        self._invoice_num_rect = None
-        self._id_num_rect = None
-        self._date_rect = None
+        self._vendor_name_rect = []
+        self._prices_rect = []
+        self._invoice_num_rect = []
+        self._id_num_rect = []
+        self._date_rect = []
 
         self._date_format = None
         self._name_on_invoice = None
@@ -76,6 +77,10 @@ class BaseInvoice(ABC):
 
     @abstractmethod
     def get_vendor_name(self):
+        pass
+
+    @abstractmethod
+    def get_name_on_invoice(self):
         pass
 
     def get_internal_name(self):

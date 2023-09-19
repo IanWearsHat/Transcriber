@@ -2,6 +2,7 @@ from templates.base_invoice import BaseInvoice, IDNumType, VendorType
 import vision
 
 
+# has dynamically changing price table
 class TextRKInvoice(BaseInvoice):
     def __init__(self, img, orientation=0, pg_num=0):
         super().__init__(img, orientation, pg_num)
@@ -47,7 +48,7 @@ class TextRKInvoice(BaseInvoice):
         return text
     
     def get_price_rect(self):
-        lines = vision.get_horizontal_lines(self._prices_table, vis_debug=True)
+        lines = vision.get_horizontal_lines(self._prices_table)
 
         lines.sort(key=lambda x: x[1])
         smallest = lines[0]
