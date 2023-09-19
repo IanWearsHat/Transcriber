@@ -13,12 +13,14 @@ class TextRKInvoice(BaseInvoice):
         self._prices_table = self.get_prices_table()
         self._info_table = self.get_info_table()
 
+        self._vendor_name_rect = [36, 70, 57, 408]
         self._prices_rect = self.get_price_rect()
         self._invoice_num_rect = [37, 64, 19, 120]
         self._id_num_rect = [79, 103, 434, 600]
         self._date_rect = [37, 59, 218, 328]
 
         self._date_format = '%m/%d/%y'
+        self._name_on_invoice = 'ROBERT KONG CHB, INC.'
         self._freight_stream_internal_name = None
         self._vendor_type = VendorType.CUSTOMS
 
@@ -37,8 +39,15 @@ class TextRKInvoice(BaseInvoice):
                 return box
         return None
     
+    def get_name_on_invoice(self):
+        return self._name_on_invoice
+
+    def get_vendor_name(self):
+        text = vision.get_text_from_cropped_rect_of_image(self._vendor_name_rect, self.page_img, has_pixel_values=True).strip()
+        return text
+    
     def get_price_rect(self):
-        lines = vision.get_horizontal_lines(self._prices_table)
+        lines = vision.get_horizontal_lines(self._prices_table, vis_debug=True)
 
         lines.sort(key=lambda x: x[1])
         smallest = lines[0]

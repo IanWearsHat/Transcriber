@@ -6,6 +6,13 @@ from inputter import Inputter
 
 debug = False
 
+def _validate_name(template):
+    intended_name = template.get_name_on_invoice()
+    vendor_name = template.get_vendor_name()
+
+    if intended_name != vendor_name:  # TODO: perhaps fuzzy match here
+        raise ValueError("Names do not match")
+
 def _validate_prices(template):
     # Prices should all be numeric
     prices = template.get_prices()
@@ -37,9 +44,10 @@ def determine_invoice_template(path):
     for template_cls in template_gen:
         img = vision.get_image(path)  # TODO: invoice might not be on page 0
 
-        template_obj = template_cls(img)
-
         try:
+            template_obj = template_cls(img)
+
+            _validate_name(template_obj)
             _validate_prices(template_obj)
             _validate_id_num(template_obj)
             _validate_date(template_obj)

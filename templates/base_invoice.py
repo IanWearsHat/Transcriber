@@ -41,6 +41,8 @@ class BaseInvoice(ABC):
         self._date_rect = None
 
         self._date_format = None
+        self._name_on_invoice = None
+        self._template_name = None
         self._freight_stream_internal_name = None
         self._vendor_type = None
 
@@ -70,6 +72,10 @@ class BaseInvoice(ABC):
         # date_format = '%m/%d/%y'
         #
         # date_obj = datetime.strptime(date_str, date_format)
+        pass
+
+    @abstractmethod
+    def get_vendor_name(self):
         pass
 
     def get_internal_name(self):
