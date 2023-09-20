@@ -1,5 +1,7 @@
 import time
 import pyautogui as gui
+import numpy as np
+import vision
 from templates.base_invoice import IDNumType
 
 
@@ -104,19 +106,67 @@ class Inputter:
 
     def access_account_payable(self):
         gui.press('f2')
+    
+    def vendor_already_exists(self):
+        # image = np.array(gui.screenshot())
+        # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        import cv2
+        # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.1accountingWithRow.png"
+        # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.5accountingWithMKCAtEnd.png"
+        path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.6accountingWithNoMKC.png"
+        image = cv2.imread(path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        last_seen = None
 
-    def check_existing_vendor_rows(self):
-        # TODO: implement this check
+        row_rect = [622, 648, 289, 485]
+        y_diff = 22
 
-        # TODO: Handling duplicate pdfs could be checked here
-        # meaning if there is an existing vendor row, then there is a duplicate pdf (or the pdf has already been inputted)
-        # and then the program would stop here.
-        #
-        # It would be a problem if there were so many pdfs coming in, but because a pdf might come in only every 5 hours
-        # or so, it doesn't matter if the program stops to check.
-        # also, this program would run when the computer is not being used, so it doesn't really matter how long it takes
-        # for the bot to determine whether the pdf has been inputted or not.
-        pass
+        # while last_seen != seen:
+        for i in range(4):
+            text = vision.get_text_from_cropped_rect_of_image(row_rect, image, debug=True, has_pixel_values=True).strip()
+            if not text:
+                return False # should CONTINUE full pipeline function
+            elif self.vendor[:18] in text: #TODO: fuzzy match
+                return True # should STOP full pipeline function
+            else:
+                seen = i
+
+            row_rect[0] += y_diff
+            row_rect[1] += y_diff
+
+        if last_seen == seen:
+            return False # should CONTINUE full pipeline function
+        else:
+            last_seen = seen
+        
+        # TODO: implement scrolling and rerun the for loop and the last if statement, maybe use a while loop 
+        # Unknown how many vendors are possible
+        """
+        last_seen = None
+        def check_table:
+            if grey in first row:
+                stop
+            check for vendor name
+            elif name in first row:
+                stop entire pipeline
+            else:
+                seen = whatever the i in range is
+                continue
+            
+            loop until 4th row
+
+            
+            if last_seen == seen:
+                stop
+            else:
+                last_seen = seen
+                
+
+        gui.scroll OR whatever the way is to move the rows down
+        screenshot again
+
+        run check_table() again 
+        """
 
     def edit_vendor(self):
         gui.click(*self.vendor_field_pt)
@@ -156,6 +206,7 @@ class Inputter:
 
     def edit_account_payable_row(self):
         # TODO: Detect if a row already exists
+        # Potentially implement this if we are doing a very optimized bot that clicks on existing vendor rows and checks that all things are as they should
 
         self.click_billing_code_field()
 
@@ -206,6 +257,9 @@ class Inputter:
         # # Accounting screen
         # self.access_accounting()
         # time.sleep(5)
+
+        # if self.vendor_already_exists():
+        #     return
 
         # self.click_account_payable_header()
         # time.sleep(1)

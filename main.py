@@ -50,14 +50,21 @@ def main():
 if __name__ == '__main__':
     # main()
     import vision
-    from templates.robert_kong import TextRKInvoice
-
+    from templates import *
+    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf"
     # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033366.pdf"
-    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
     img = vision.get_image(path)
-    inv = TextRKInvoice(img)
+    inv = TextMKCInvoice(img)
     # inv.get_prices_table()
-    print(inv.get_prices())
-    print(inv.get_id_num())
-    print(inv.get_date())
-    print(inv.get_invoice_num())
+    # print(inv.get_prices())
+    # print(inv.get_id_num())
+    # print(inv.get_date())
+    # print(inv.get_invoice_num())
+
+    import inputter
+
+    data = inv.get_data()
+    bot = inputter.Inputter(data)
+    stop = bot.vendor_already_exists()
+    print(stop)
