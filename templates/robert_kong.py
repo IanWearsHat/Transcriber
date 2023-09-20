@@ -22,13 +22,13 @@ class TextRKInvoice(BaseInvoice):
 
         self._date_format = '%m/%d/%y'
         self._name_on_invoice = 'ROBERT KONG CHB, INC.'
-        self._freight_stream_internal_name = None
+        self._freight_stream_internal_name = 'Robert Kong, CHB'
         self._vendor_type = VendorType.CUSTOMS
 
     def get_prices_table(self):
         for box in self._boxes:
             text = vision.get_text_from_cropped_rect_of_image(self._prices_table_check_rect, box, has_pixel_values=True)
-            if 'description' in text.lower():
+            if 'description' in text.lower(): #TODO: fuzzy match
                 box[:40, 0:len(box[1])] = (255)
                 return box
         return None

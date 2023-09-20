@@ -152,7 +152,7 @@ def straighten_image(image):
 
     return rotated_image(image, angle)
 
-def get_relevant_boxes(img):
+def get_relevant_boxes(img, debug=False):
     # boxes code: https://stackoverflow.com/questions/57196047/how-to-detect-all-the-rectangular-boxes-in-the-given-image
     # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     adapt_thresh= cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 5)
@@ -164,7 +164,7 @@ def get_relevant_boxes(img):
 
     # find contours
     contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
-    rects = []
+    images = []
    
     for c in contours:
         # get the bounding rect
@@ -176,9 +176,16 @@ def get_relevant_boxes(img):
             blank[:] = (255)
             blank[20:20+h, 20:20+w] = img[y:y+h, x:x+w]
 
-            rects.append(blank)
+            images.append(blank)
     
-    return rects
+    if debug:
+        for i in range(len(images)):
+            cv2.imshow(str(i), images[i])
+            cv2.imwrite(str(i) + '.png', images[i])
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    return images
 
 
 if __name__ == '__main__':
