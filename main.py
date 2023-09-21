@@ -33,7 +33,7 @@ def main():
         Inputter.exit_freightstream()
 
     fs_path = r"C:\Program Files (x86)\Freightstream\FreightStream2.1\fms2000.exe"
-    subprocess.run(fs_path)
+    subprocess.Popen(fs_path)
 
     Inputter.login_to_freightstream()
     

@@ -4,6 +4,7 @@ import numpy as np
 import vision
 from templates.base_invoice import IDNumType
 
+debug = False
 
 class Inputter:
     # Login
@@ -162,7 +163,7 @@ class Inputter:
 
         # while last_seen != seen:
         for i in range(4):
-            text = vision.get_text_from_cropped_rect_of_image(row_rect, image, debug=True, has_pixel_values=True).strip()
+            text = vision.get_text_from_cropped_rect_of_image(row_rect, image, has_pixel_values=True).strip()
             if not text:
                 return False # should CONTINUE full pipeline function
             elif self.vendor[:18] in text: #TODO: fuzzy match
@@ -275,57 +276,57 @@ class Inputter:
         # click on existing row if vendor exists, then F2
         # To create new row, F2
         # Edit Account Payable Fields
+        if debug:
+            print("RUNNING INPUTTER")
+            print(self.vendor)
+            print(self.date)
+            print(self.invoice_num)
+            print(self.id_num_type)
+            print(self.id_num)
+            print(self.price_rows)
 
-        print("RUNNING INPUTTER")
-        print(self.vendor)
-        print(self.date)
-        print(self.invoice_num)
-        print(self.id_num_type)
-        print(self.id_num)
-        print(self.price_rows)
+        time.sleep(3)
 
-        # time.sleep(3)
+        # Main screen
+        self.click_air_import()
+        time.sleep(1)
 
-        # # Main screen
-        # self.click_air_import()
-        # time.sleep(1)
+        self.click_hawb_list()
+        time.sleep(5)
 
-        # self.click_hawb_list()
-        # time.sleep(5)
+        # HAWB List screen
+        self.search_id()
+        time.sleep(5)
 
-        # # HAWB List screen
-        # self.search_id()
-        # time.sleep(5)
+        # Accounting screen
+        self.access_accounting()
+        time.sleep(5)
 
-        # # Accounting screen
-        # self.access_accounting()
-        # time.sleep(5)
+        if self.vendor_already_exists():
+            return
 
-        # if self.vendor_already_exists():
-        #     return
+        self.click_account_payable_header()
+        time.sleep(1)
 
-        # self.click_account_payable_header()
-        # time.sleep(1)
+        # Account Payable screen
+        self.access_account_payable()
+        time.sleep(3)
 
-        # # Account Payable screen
-        # self.access_account_payable()
-        # time.sleep(3)
+        self.edit_vendor()
+        time.sleep(2)
 
-        # self.edit_vendor()
-        # time.sleep(2)
+        self.edit_dates()
+        time.sleep(1)
 
-        # self.edit_dates()
-        # time.sleep(1)
+        self.edit_invoice_num()
+        time.sleep(1)
 
-        # self.edit_invoice_num()
-        # time.sleep(1)
-
-        # self.edit_account_payable_row()
+        self.edit_account_payable_row()
 
         # TODO: DO NOT PRESS F12 TO SAVE BECAUSE THAT WILL MAKE CHANGES TO DB
         # TODO: but eventually you press F12
         
-        # self.close_all_tabs()
+        self.close_all_tabs()
 
 
 if __name__ == '__main__':
@@ -333,7 +334,6 @@ if __name__ == '__main__':
     time.sleep(3)
     bot.run_full_pipeline()
 
-    debug = False
     if debug:
         # Main screen
         bot.click_air_import()
