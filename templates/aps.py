@@ -2,7 +2,7 @@ from templates.base_invoice import BaseInvoice, IDNumType, VendorType
 import vision
 
 
-# TODO: internally will change its internal vendor name if it sees hanoi or hochiminh
+# internally will change its internal vendor name if it sees hanoi or hochiminh
 class TextAPSInvoice(BaseInvoice):
     def __init__(self, img, orientation=0, pg_num=0):
         super().__init__(img, orientation, pg_num)

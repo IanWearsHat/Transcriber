@@ -5,9 +5,14 @@ import vision
 from templates.base_invoice import IDNumType
 
 
-# rename mawb to just awb
-# also the thing should be clicking on hawb list, not mawb
 class Inputter:
+    # Login
+    user_pt = (642, 543)
+
+    # Exit
+    exit_pt = (1887, 16)
+    confirm_exit_pt = (905, 601)
+
     # Main menu
     nav_bar_air_import_option_pt = (415, 45)
     hawb_list_dropdown_option_pt = (480, 108)
@@ -26,6 +31,9 @@ class Inputter:
     invoice_num_field_pt = (604, 383)
     billing_code_first_row_pt = (220, 500)
     price_first_row_pt = (845, 500)
+
+    # Close tabs
+    close_tab_pt = (795, 77)
 
     def __init__(self, data: dict):
         """
@@ -59,16 +67,46 @@ class Inputter:
                 },
                 "id_num": (IDNumType.MAWB, '15792303271')
             }
-        """
-
-        # TODO: date should have no slashes and just have numbers
-        
+        """ 
         self.vendor = data['vendor']
         self.date = data['date']
         self.invoice_num = data['invoice_num']
         self.price_rows = data['rows']
         self.id_num_type = data['id_num'][0]
         self.id_num = data['id_num'][1]
+
+    @staticmethod
+    def login_to_freightstream():
+        time.sleep(10)
+        gui.click(*Inputter.user_pt)
+
+        with open("credentials.txt", 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            user = lines[3]
+            pwd = lines[4]
+
+        time.sleep(1)
+
+        gui.write(user)
+        time.sleep(1)
+
+        gui.press('tab')
+        time.sleep(1)
+
+        gui.write(pwd)
+        time.sleep(1)
+
+        gui.press('enter')
+        time.sleep(10)
+    
+    @staticmethod
+    def exit_freightstream():
+        time.sleep(10)
+        gui.click(*Inputter.exit_pt)
+        time.sleep(2)
+
+        gui.click(*Inputter.confirm_exit_pt)
+        time.sleep(10)
 
     def click_air_import(self):
         gui.click(*self.nav_bar_air_import_option_pt)
@@ -222,6 +260,10 @@ class Inputter:
 
             gui.press('tab', presses=3, interval=0.1)
             time.sleep(1)
+    
+    def close_all_tabs(self):
+        gui.click(*self.close_tab_pt, clicks=4, interval=1)
+        time.sleep(1)
 
     def run_full_pipeline(self):
         # click air import
@@ -281,6 +323,8 @@ class Inputter:
 
         # TODO: DO NOT PRESS F12 TO SAVE BECAUSE THAT WILL MAKE CHANGES TO DB
         # TODO: but eventually you press F12
+        
+        # self.close_all_tabs()
 
 
 if __name__ == '__main__':

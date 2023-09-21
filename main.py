@@ -1,6 +1,8 @@
 import keyboard
 import time
 from pathlib import Path
+import subprocess
+import pyautogui as gui
 
 from watchdog import Watchdog
 from transcriber import transcribe
@@ -21,6 +23,7 @@ def _delete_all_new_attachments():
 
 
 def main():
+    
     # TODO: needs to focus on FreightStream if it's open
     # TODO: needs to open and then focus on FreightStream if it's not open
     # TODO: if there are multiple pdfs that have been downloaded, then close all tabs except for hawb list and then go from there instead of having to open up all tabs over again
@@ -29,8 +32,7 @@ def main():
     if keyboard.is_pressed('p'):
         run = False
 
-    watcher = Watchdog()
-    watcher.run()
+    Watchdog().run()
 
     # TODO: currently keeps redownloading the same pdfs because the method that reads from inbox does not mark the emails as read
     if _has_new_attachments():
@@ -48,21 +50,34 @@ def main():
 
 
 if __name__ == '__main__':
-    # TODO: what if the file has not even been opened on freightstream
-    # TODO: after searching for the id num, screenshot and check if the file is even there
-    # main()
-    import vision
-    from templates import *
-    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf"
-    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090014.pdf"
-    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090018.pdf"
-    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033366.pdf"
-    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
-    img = vision.get_image(path)
-    inv = TextAPSInvoice(img)
-    # inv.get_prices_table()
-    # print(inv.get_prices())
-    # print(inv.get_id_num())
-    # print(inv.get_date())
-    # print(inv.get_invoice_num())
-    print(inv.get_data())
+    window = gui.getWindowsWithTitle("FMS 2")
+    if window:
+        window[0].activate()
+
+        # exits freightstream because there might be an afk program termination
+        Inputter.exit_freightstream()
+    else:
+        fs_path = r"C:\Program Files (x86)\Freightstream\FreightStream2.1\fms2000.exe"
+        subprocess.run(fs_path)
+
+        Inputter.login_to_freightstream()
+
+
+    # # TODO: what if the file has not even been opened on freightstream
+    # # TODO: after searching for the id num, screenshot and check if the file is even there
+    # # main()
+    # import vision
+    # from templates import *
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604751.pdf"
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090014.pdf"
+    # # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090018.pdf"
+    # # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033366.pdf"
+    # # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
+    # img = vision.get_image(path)
+    # inv = TextAPSInvoice(img)
+    # # inv.get_prices_table()
+    # # print(inv.get_prices())
+    # # print(inv.get_id_num())
+    # # print(inv.get_date())
+    # # print(inv.get_invoice_num())
+    # print(inv.get_data())
