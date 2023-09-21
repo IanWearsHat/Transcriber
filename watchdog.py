@@ -42,7 +42,7 @@ class Watchdog:
                     # only download if the attachment is a pdf and it doesn't already exist
 
                     # really for in case we need all attachments
-                    if ".pdf" in filename and not pathlib.Path(filename).is_file():
+                    if filename and ".pdf" in filename and not pathlib.Path(filename).is_file():
                             self.download_attachment(part, filename)
 
     def download_attachment(self, part, filename):

@@ -4,7 +4,7 @@ import vision
 from validation import validate_data
 from inputter import Inputter
 
-debug = False
+debug = True
 
 def _validate_name(template):
     intended_name = template.get_name_on_invoice()
@@ -75,7 +75,7 @@ def transcribe(path):
 
 if __name__ == '__main__':
     # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\MKC\Invoice-0604764.pdf"
-    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
-    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090014.pdf"
+    # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\RobertKong\Invoice-0033610_table_size_changed.pdf"
+    path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\pdfExamples\APS-HoChiMinh\CONNECTED- DAE-ASA23090014.pdf"
     inv_obj = determine_invoice_template(path)
     print(inv_obj.get_data())

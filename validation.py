@@ -19,5 +19,5 @@ def validate_data(data):
 
     for billing_code, price in data['rows'].items():
         if type(billing_code) is not str or \
-                type(price) is not float:
+                not price.replace('.', '').isnumeric():
             raise TypeError("Billing code should be string and price should be numeric")

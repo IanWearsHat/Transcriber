@@ -23,6 +23,19 @@ def _delete_all_new_attachments():
 
 
 def main():
+    time.sleep(3)
+    window = gui.getWindowsWithTitle("FMS 2")
+    if window:
+        window[0].activate()
+        time.sleep(0.5)
+
+        # exits freightstream because there might be an afk program termination
+        Inputter.exit_freightstream()
+
+    fs_path = r"C:\Program Files (x86)\Freightstream\FreightStream2.1\fms2000.exe"
+    subprocess.run(fs_path)
+
+    Inputter.login_to_freightstream()
     
     # TODO: needs to focus on FreightStream if it's open
     # TODO: needs to open and then focus on FreightStream if it's not open
@@ -37,11 +50,13 @@ def main():
     # TODO: currently keeps redownloading the same pdfs because the method that reads from inbox does not mark the emails as read
     if _has_new_attachments():
         for pdf_path in _get_all_new_attachments():
+            print(pdf_path)
             time.sleep(10)
 
             data = transcribe(pdf_path)
 
-            Inputter(data).run_full_pipeline()
+            if data:
+                Inputter(data).run_full_pipeline()
 
     _delete_all_new_attachments()
 
@@ -50,18 +65,7 @@ def main():
 
 
 if __name__ == '__main__':
-    window = gui.getWindowsWithTitle("FMS 2")
-    if window:
-        window[0].activate()
-
-        # exits freightstream because there might be an afk program termination
-        Inputter.exit_freightstream()
-    else:
-        fs_path = r"C:\Program Files (x86)\Freightstream\FreightStream2.1\fms2000.exe"
-        subprocess.run(fs_path)
-
-        Inputter.login_to_freightstream()
-
+    main()
 
     # # TODO: what if the file has not even been opened on freightstream
     # # TODO: after searching for the id num, screenshot and check if the file is even there

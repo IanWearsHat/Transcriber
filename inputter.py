@@ -146,14 +146,15 @@ class Inputter:
         gui.press('f2')
     
     def vendor_already_exists(self):
-        # image = np.array(gui.screenshot())
-        # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         import cv2
+        image = np.array(gui.screenshot())
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        
         # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.1accountingWithRow.png"
         # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.5accountingWithMKCAtEnd.png"
-        path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.6accountingWithNoMKC.png"
-        image = cv2.imread(path)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # path = r"C:\Users\ianbb\PycharmProjects\FreightStreamTranscriber\freightStreamImages\4.6accountingWithNoMKC.png"
+        # image = cv2.imread(path)
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         last_seen = None
 
         row_rect = [622, 648, 289, 485]
